@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Environnement
+.env
+.venv/
+venv/
+env/
+
+# Données sensibles
+uploads/
+exports/
+runs/
+logs/
+data_cache/
+scenarios/
+
+# Fichiers générés
+*.parquet
+*.xlsx
+*.csv
+*.html
+*.png
+
+# IDE
+.vscode/
+.claude/
+*.lock
+
+# OS
+.DS_Store
+Thumbs.db
