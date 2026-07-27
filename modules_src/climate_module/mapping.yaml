@@ -1,0 +1,35 @@
+# mapping.yaml
+# Clé   : nom EXACT de la variable NGFS (copiez-collez depuis l'output)
+# Valeur : nom EXACT de votre colonne historique
+
+"Gross Domestic Product (GDP)": "Real_ GDP"
+"Unemployment rate ; %": "Unemployment _rate"
+"Inflation rate ; %": "cpi_inflation"
+"Central bank Intervention rate (policy interest rate) ; %": "policy_rate"
+"Long term interest rate ; %": "policy_rate"
+"Long term real interest rate ; %": "policy_rate"
+"Effective exchange rate": "real_effectif_exchange_rate"
+"Exchange rate ; domestic per US$": "exchange_rate_buy"
+"Oil price ; US$ per barrel": "oil_price"
+"Gas price ; US$ per barrel (equiv)": "oil_price"
+"Coal price ; US$ per barrel (equiv)": "oil_price"
+"House prices (residential)": "real_estate_price"
+"Exports (goods and services)": "deficit_trade_balance"
+# ──────────────────────────────────────────────────────────────────────────────
+# NGFS Scenario Severity Ranking
+# ──────────────────────────────────────────────────────────────────────────────
+# Rang de sévérité économique a priori des scénarios NGFS.
+# Plus le rang est élevé, plus le scénario est sévère (stress économique fort).
+# Utilisé par le ScenarioSelector pour :
+#   - Pénaliser les paires où adverse est plus sévère que severe (incohérence)
+#   - Favoriser les paires économiquement ordonnées (adverse < severe en sévérité)
+# Configurable : ajouter/modifier selon la version NGFS utilisée.
+# Un scénario absent de cette table reçoit un rang neutre (médian).
+
+ngfs_scenario_severity:
+  "Net Zero 2050":                                  1   # transition ordonnée, peu de stress physique
+  "Below 2°C":                                      2   # transition légèrement moins stricte
+  "Nationally Determined Contributions (NDCs)":     3   # politiques actuelles insuffisantes
+  "Delayed transition":                             4   # choc brutal tardif
+  "Current Policies":                               5   # inaction climatique, stress physique élevé
+  "Fragmented World":                               6   # choc économique + physique, pire scénario

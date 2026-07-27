@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}StressLab{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+</head>
+<body>
+
+{% if '/dashboard' in request.path or '/transmission' in request.path %}
+{# ── DASHBOARD / TRANSMISSION: white PwC sidebar ── #}
+{% block dashboard_sidebar %}{% endblock %}
+{% block dashboard_topbar %}{% endblock %}
+<div class="d-main"><div class="d-page">{% block content %}{% endblock %}</div></div>
+
+{% else %}
+{# ── UPLOAD: black sidebar ── #}
+<aside class="dsb">
+  <div class="dsb-brand">
+    <div class="dsb-logo"><img src="/static/img/pwc-logo.png" alt="PwC" style="height:34px;width:auto"></div>
+    <div style="line-height:1.2">
+      <span class="dsb-title" style="font-size:11px;white-space:nowrap">Stress Testing Platform</span>
+      <span class="dsb-sub" style="font-size:9px">Multi-Risk Analytics</span>
+    </div>
+  </div>
+  <nav class="dsb-nav">
+    <a href="/upload" class="dsb-link {% if '/upload' in request.path or request.path=='/' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+      </svg>Accueil
+    </a>
+    <a href="/upload" class="dsb-link {% if '/upload' in request.path %}active{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+      </svg>Upload Data
+    </a>
+    <a href="/dashboard" class="dsb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>Dashboard Résultats
+    </a>
+    <a href="/transmission" class="dsb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <line x1="12" y1="3" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="21"/>
+        <line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/>
+      </svg>Transmission du Choc
+    </a>
+  </nav>
+  <div class="dsb-help">
+    <h4>Besoin d'aide ?</h4>
+    <p>Documentation &amp; support</p>
+    <a href="#" class="dsb-help-btn">Documentation</a>
+  </div>
+</aside>
+<header class="d-topbar">
+  <span class="d-topbar-menu">☰</span>
+  <div class="d-topbar-brand">
+    <img src="/static/img/pwc-logo.png" alt="PwC" style="height:28px;width:auto">
+    <div class="d-topbar-titles">
+      <span class="d-topbar-title">{% block page_title %}StressLab{% endblock %}</span>
+      <span class="d-topbar-sub">{% block page_sub %}{% endblock %}</span>
+    </div>
+  </div>
+  <div class="d-topbar-right" style="margin-left:auto">
+    {% block topbar_actions %}{% endblock %}
+  </div>
+</header>
+<div class="d-main"><div class="d-page">{% block upload_content %}{% endblock %}</div></div>
+{% endif %}
+
+<div id="toasts"></div>
+<script>
+function toast(m,t){var c=document.getElementById('toasts'),d=document.createElement('div');
+d.className='toast '+(t||'ok');d.textContent=m;c.appendChild(d);setTimeout(function(){d.remove()},5000)}
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

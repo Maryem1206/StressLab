@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Upload Data — StressLab{% endblock %}
+{% block page_title %}Upload Data{% endblock %}
+{% block page_sub %}Chargez vos données et sélectionnez le périmètre géographique{% endblock %}
+
+{% block upload_content %}
+<div class="upload-wrap">
+  <div class="card">
+    <div class="card-title">Fichiers de données</div>
+    <div class="card-sub">Glissez-déposez ou cliquez pour sélectionner vos fichiers</div>
+    <div class="dropzone" id="dropzone">
+      <div class="dz-icon">📂</div>
+      <p class="dz-text">Déposez ici ou <strong>cliquez pour parcourir</strong></p>
+      <p class="dz-fmt">Historique CSV &middot; NGFS XLSX &middot; Portfolio ZIP</p>
+      <input type="file" id="file-input" multiple
+             accept=".csv,.xlsx,.xls,.yaml,.yml,.json,.zip" hidden>
+    </div>
+    <div id="file-list" hidden style="margin-top:12px">
+      <div id="file-items"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Périmètre géographique</div>
+    <div class="card-sub">Appliqué aux scénarios macroéconomiques et climatiques</div>
+    <div class="geo-grid">
+      {% for flag,label,val in [
+        ("🇫🇷","France","France"),("🇩🇪","Allemagne","Germany"),
+        ("🇬🇧","Royaume-Uni","United Kingdom"),("🇪🇬","Égypte","Egypt"),
+        ("🌍","MENA","MENA"),("🌍","Afrique du Nord","North Africa"),
+        ("🌍","Europe","Europe"),("🌍","GCC","GCC")] %}
+      <label class="geo-opt">
+        <input type="radio" name="country" value="{{ val }}"
+               {% if val=="Egypt" %}checked{% endif %}>
+        <div class="geo-body">
+          <span class="geo-flag">{{ flag }}</span><span>{{ label }}</span>
+        </div>
+      </label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <button id="btn-continue" class="btn btn-primary btn-lg"
+          style="justify-content:center">
+    Continuer vers le Dashboard →
+  </button>
+  <div id="upload-status" style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* ── File upload ─────────────────────────────────────── */
+var dz=document.getElementById('dropzone');
+var fi=document.getElementById('file-input');
+var fl=document.getElementById('file-list');
+var fitems=document.getElementById('file-items');
+var STATUS=document.getElementById('upload-status');
+
+/* uploaded: { filename: serverAbsolutePath } */
+var uploaded = JSON.parse(localStorage.getItem('sl_uploaded') || '{}');
+renderExisting();
+
+dz.addEventListener('click',function(){fi.click()});
+dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('drag-over')});
+dz.addEventListener('dragleave',function(){dz.classList.remove('drag-over')});
+dz.addEventListener('drop',function(e){
+  e.preventDefault();dz.classList.remove('drag-over');
+  doUpload(Array.from(e.dataTransfer.files));
+});
+fi.addEventListener('change',function(){doUpload(Array.from(fi.files))});
+
+function doUpload(files){
+  files.forEach(function(file){
+    var fd=new FormData(); fd.append('file',file);
+    STATUS.textContent='Chargement de '+file.name+'...';
+    fetch('/api/upload-file',{method:'POST',body:fd})
+      .then(function(r){return r.json()})
+      .then(function(d){
+        if(d.error){toast(d.error,'err');STATUS.textContent='';return}
+        uploaded[d.filename]=d.path;
+        localStorage.setItem('sl_uploaded', JSON.stringify(uploaded));
+        addFileItem(d.filename, d.size);
+        STATUS.textContent='✓ '+d.filename+' chargé';
+        toast(d.filename+' chargé','ok');
+      })
+      .catch(function(e){toast('Erreur upload: '+e.message,'err');STATUS.textContent=''});
+  });
+}
+
+function addFileItem(name, size){
+  fl.hidden=false;
+  var div=document.createElement('div'); div.className='file-item'; div.id='fi-'+name;
+  div.innerHTML='<span class="fi-name">'+name+'</span>'
+    +'<span class="fi-size">'+(size/1024).toFixed(1)+' KB</span>'
+    +'<span class="fi-ok">✓</span>'
+    +'<button class="fi-del" title="Supprimer" onclick="deleteFile(\''+name+'\')">✕</button>';
+  fitems.appendChild(div);
+}
+
+function renderExisting(){
+  if(!Object.keys(uploaded).length) return;
+  fl.hidden=false;
+  for(var fname in uploaded){
+    var div=document.createElement('div'); div.className='file-item'; div.id='fi-'+fname;
+    div.innerHTML='<span class="fi-name">'+fname+'</span>'
+      +'<span class="fi-size">précédemment chargé</span>'
+      +'<span class="fi-ok">✓</span>'
+      +'<button class="fi-del" title="Supprimer" onclick="deleteFile(\''+fname+'\')">✕</button>';
+    fitems.appendChild(div);
+  }
+  STATUS.textContent=Object.keys(uploaded).length+' fichier(s) en mémoire locale';
+}
+
+function deleteFile(name){
+  fetch('/api/delete-file',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({filename:name})
+  })
+  .then(function(r){return r.json()})
+  .then(function(){
+    delete uploaded[name];
+    localStorage.setItem('sl_uploaded', JSON.stringify(uploaded));
+    var el=document.getElementById('fi-'+name);
+    if(el) el.remove();
+    if(!Object.keys(uploaded).length) fl.hidden=true;
+    STATUS.textContent=name+' supprimé';
+    toast(name+' supprimé','ok');
+  })
+  .catch(function(e){toast('Erreur suppression: '+e.message,'err')});
+}
+
+/* ── Continue button ─────────────────────────────────── */
+document.getElementById('btn-continue').addEventListener('click',function(){
+  var country=document.querySelector('input[name=country]:checked');
+  /* Save to localStorage — available everywhere without server session */
+  localStorage.setItem('sl_country', country ? country.value : 'Egypt');
+  localStorage.setItem('sl_uploaded', JSON.stringify(uploaded));
+  window.location.href='/dashboard';
+});
+</script>
+{% endblock %}

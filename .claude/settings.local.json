@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Invoke-RestMethod -Uri \"http://127.0.0.1:5000/api/job-status/ad3d16cb-a\" -Method Get)",
+      "PowerShell(Get-Process -Id 4276 -ErrorAction SilentlyContinue)",
+      "PowerShell(python -c \"import ast; ast.parse\\(open\\('app/modules/climate/ngfs_liquidity_engine.py', encoding='utf-8'\\).read\\(\\)\\)\")",
+      "PowerShell(python -m pytest tests -q --ignore=tests\\\\test_macro_projector.py 2>&1)",
+      "PowerShell(Invoke-RestMethod -Uri \"http://127.0.0.1:5000/api/job-status/30575143-6\" -Method Get)",
+      "PowerShell(Get-Process -Id 14580 -ErrorAction SilentlyContinue)",
+      "PowerShell(Invoke-RestMethod -Uri \"http://127.0.0.1:5000/api/job-status/a9a8d6e6-7\" -Method Get)",
+      "PowerShell(Get-Process -Id 11124 -ErrorAction SilentlyContinue)",
+      "PowerShell($env:PYTHONIOENCODING=\"utf-8\"; python \"C:\\\\Users\\\\lenovo\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-lenovo-OneDrive-Documents-stress-platform-with-liquidity\\\\2cc76e76-747c-4e2b-b924-223707cfeb4e\\\\scratchpad\\\\verify_engine_adapter_fix.py\")",
+      "PowerShell($env:PYTHONIOENCODING=\"utf-8\"; python \"C:\\\\Users\\\\lenovo\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-lenovo-OneDrive-Documents-stress-platform-with-liquidity\\\\2cc76e76-747c-4e2b-b924-223707cfeb4e\\\\scratchpad\\\\inspect_ngfs_inflation.py\")",
+      "PowerShell($env:PYTHONIOENCODING=\"utf-8\"; python \"C:\\\\Users\\\\lenovo\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-lenovo-OneDrive-Documents-stress-platform-with-liquidity\\\\2cc76e76-747c-4e2b-b924-223707cfeb4e\\\\scratchpad\\\\inspect_ngfs_inflation2.py\")",
+      "PowerShell(Get-Command chromium-cli -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command npx -ErrorAction SilentlyContinue)",
+      "PowerShell(netstat -ano)"
+    ]
+  }
+}

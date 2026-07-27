@@ -1,0 +1,19 @@
+{
+  // Associer les fichiers HTML du dossier templates à Jinja2 (désactive le validateur HTML natif)
+  "files.associations": {
+    "**/templates/**/*.html": "jinja-html",
+    "templates/*.html": "jinja-html"
+  },
+
+  // Désactiver la validation HTML intégrée (source des 472 faux positifs)
+  "html.validate.scripts": false,
+  "html.validate.styles": false,
+
+  // Désactiver les diagnostics CSS inline signalés dans les attributs style=""
+  "css.validate": false,
+
+  // Emmet : activer dans les templates Jinja
+  "emmet.includeLanguages": {
+    "jinja-html": "html"
+  }
+}
